@@ -23,7 +23,4 @@ jobs:
           git config --global user.email "<>"
           git commit -m "Update package-lock.json" --allow-empty
       - run: |
-#          gh auth login --with-token
           git push --force ${{ github.repositoryUrl }} lock
-        env:
-          GH_TOKEN: ${{ github.token }}
