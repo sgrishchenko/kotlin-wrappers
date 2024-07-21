@@ -20,8 +20,8 @@ jobs:
           ./gradlew :kotlinUpgradePackageLock
           git add package-lock.json
           git config --global user.name "GitHub bot"
-          git config --global user.email "fake@mail.com"
-          git commit -m "Update package-lock.json"
+          git config --global user.email "<>"
+          git commit -m "Update package-lock.json" --allow-empty
       - run: |
           gh auth login --with-token
           git push --force ${{ github.repositoryUrl }} lock
