@@ -24,4 +24,4 @@ jobs:
           git commit -m "Update package-lock.json" --allow-empty
       - run: |
           git checkout -b lock
-          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git lock
+          git push -f https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git lock
