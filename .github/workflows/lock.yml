@@ -26,6 +26,6 @@ jobs:
           git checkout -b lock
           git push -f https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git lock
       - run: |
-          gh pr create --fill --base ${{ github.ref_name }}
+          gh pr create --fill --base ${{ github.ref_name }} --head lock
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
