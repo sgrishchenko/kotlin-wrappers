@@ -23,4 +23,5 @@ jobs:
           git config --global user.email "<>"
           git commit -m "Update package-lock.json" --allow-empty
       - run: |
+          git checkout -b lock
           git push --force ${{ github.repositoryUrl }} lock
