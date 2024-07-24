@@ -34,7 +34,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: |
           echo "${{ steps.pr_exists.outputs.result }}"
-      - if: steps.pr_exists.outputs.result
+      - if: ${{ !steps.pr_exists.outputs.result }}
         run: |
           gh pr create --fill --base ${{ github.ref_name }} --head lock
         env:
