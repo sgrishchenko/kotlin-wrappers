@@ -27,7 +27,7 @@ jobs:
           git push -f https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git lock
       - id: pr_exists
         run: |
-          gh pr view lock && echo "result=true" || echo "result=false"
+          gh pr view lock42 && echo "result=true" || echo "result=false"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - if: steps.pr_exists.outputs.result
