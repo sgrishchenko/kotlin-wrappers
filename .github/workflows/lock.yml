@@ -25,14 +25,14 @@ jobs:
       - run: |
           git checkout -b lock
           git push -f https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git lock
-      - id: pr-exists
+      - id: pr-state
         run: |
-          echo "state=$( gh pr view lock42 --json state --jq state || echo "ABSENT" )" >> "$GITHUB_OUTPUT"
+          echo "state=$( gh pr view lock --json state --jq state || echo "ABSENT" )" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: |
-          echo "${{ steps.pr-exists.outputs.state }}"
-      - if: ${{ steps.pr-exists.outputs.state == 'OPEN' }}
+          echo "${{ steps.pr-state.outputs.state }}"
+      - if: ${{ steps.pr-state.outputs.state != 'OPEN' }}
         run: |
           gh pr create --fill --base ${{ github.ref_name }} --head lock
         env:
