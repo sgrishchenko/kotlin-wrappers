@@ -40,7 +40,7 @@ jobs:
           git config --global user.email "<>"
           git commit -m "Update package-lock.json" --allow-empty
 
-      - name: Commit changes
+      - name: Push changes
         if: steps.modified-files.outputs.list == 'package-lock.json'
         run: |
           git checkout -b $PR_BRANCH
