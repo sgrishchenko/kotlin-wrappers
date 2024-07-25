@@ -18,6 +18,15 @@ jobs:
           java-version: '21'
       - run: |
           ./gradlew :kotlinUpgradePackageLock
+      - id: modified-files
+        run: |
+          echo "list=$( git ls-files --modified )" >> "$GITHUB_OUTPUT"
+      - run: |
+          echo "before"
+          echo "${{ steps.modified-files.outputs.list }}"
+          echo "${{ steps.modified-files.outputs.list == 'package-lock.json' }}"
+          echo "after"
+      - run: |
           git add package-lock.json
           git config --global user.name "GitHub bot"
           git config --global user.email "<>"
