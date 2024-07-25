@@ -1,6 +1,5 @@
 name: Lock
 
-
 on:
   push:
     branches:
