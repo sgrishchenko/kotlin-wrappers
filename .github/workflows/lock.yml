@@ -10,49 +10,55 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    outputs:
-      updated: ${{ steps.modified-files.outputs.list == 'package-lock.json' }}
+    env:
+      PR_BRANCH: lock
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '21'
-      - run: |
+
+      - name: Update lock
+        run: |
           ./gradlew :kotlinUpgradePackageLock
+
       - id: modified-files
+        name: Check modified files
         run: |
           echo "list=$( git ls-files --modified )" >> "$GITHUB_OUTPUT"
 
-  fix-changes:
-
-    runs-on: ubuntu-latest
-
-    needs: update-lock
-
-    if: needs.update-lock.outputs.updated
-
-    steps:
-      - run: |
-          git status
-      - run: |
+      - name: Commit changes
+        if: steps.modified-files.outputs.list == 'package-lock.json'
+        run: |
           git add package-lock.json
           git config --global user.name "GitHub bot"
           git config --global user.email "<>"
           git commit -m "Update package-lock.json" --allow-empty
-      - run: |
-          git checkout -b lock
-          git push -f https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git lock
-      - id: pr-state
+
+      - name: Commit changes
+        if: steps.modified-files.outputs.list == 'package-lock.json'
         run: |
-          echo "state=$( gh pr view lock --json state --jq .state || echo "ABSENT" )" >> "$GITHUB_OUTPUT"
+          git checkout -b $PR_BRANCH
+          git push -f https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git $PR_BRANCH
+
+      - id: pr-state
+        name: Check PR
+        if: steps.modified-files.outputs.list == 'package-lock.json'
+        run: |
+          echo "state=$( gh pr view $PR_BRANCH --json state --jq .state || echo "ABSENT" )" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: |
-          echo "${{ steps.pr-state.outputs.state }}"
-      - if: ${{ steps.pr-state.outputs.state != 'OPEN' }}
+
+      - name: Create PR
+        if: >
+          steps.modified-files.outputs.list == 'package-lock.json'
+          && steps.pr-state.outputs.state != 'OPEN'
         run: |
-          gh pr create --fill --base ${{ github.ref_name }} --head lock
+          gh pr create --fill --base ${{ github.ref_name }} --head $PR_BRANCH
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
