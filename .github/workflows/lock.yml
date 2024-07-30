@@ -25,7 +25,8 @@ jobs:
 
       - name: Update lock
         run: |
-          ./gradlew :kotlinUpgradePackageLock
+          rm package-lock.json
+          ./gradlew :kotlinStorePackageLock
 
       - id: modified-files
         name: Check modified files
